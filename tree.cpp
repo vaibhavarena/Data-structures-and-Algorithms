@@ -80,6 +80,7 @@ void breadth_slow(Node* root)
 		printk(root, i);
 }
 
+// Level order traversal Efficient
 void breadth(Node* root)
 {
 	if (root == NULL)
@@ -110,6 +111,7 @@ void breadth(Node* root)
 	}
 }
 
+// Level order traversal with new line
 void breadth_m2(Node* root)
 {
 	queue<Node*> q;
@@ -133,6 +135,43 @@ void breadth_m2(Node* root)
 		}
 		cout << "\n";
 	}
+}
+
+int getSize(Node* root)
+{
+	if (root == NULL)
+		return 0;
+	else
+		return 1 + getSize(root->left) + getSize(root->right);
+}
+
+int getSize_iter(Node* root)
+{
+	if (root == NULL)
+		return 0;
+
+	queue<Node*> x;
+	x.push(root);
+	int count = 0;
+	while (x.size() > 0)
+	{
+		Node* cur = x.front();
+		count += 1;
+		x.pop();
+		if(cur->left != NULL)
+			x.push(cur->left);
+		if(cur->right != NULL)
+			x.push(cur->right);
+	}
+	return count;
+}
+
+int getMax(Node* root)
+{
+	if (root == NULL)
+		return INT_MIN;
+	else
+		return max(root->key, max(getMax(root->left), getMax(root->right)));
 }
 
 int main()
@@ -174,6 +213,12 @@ int main()
 	cout << "\n";
 	cout << "Level order traversal efficient Method 2: \n";
 	breadth_m2(root);
-
+	cout << "Size of binary tree : ";
+	cout << getSize(root);
+	cout << "\nSize of binary tree Iterative : ";
+	cout << getSize_iter(root);
+	cout << "\nMax in binary tree : ";
+	cout << getMax(root);
 	return 0;
 }
+
