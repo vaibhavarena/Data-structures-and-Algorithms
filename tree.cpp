@@ -1,9 +1,9 @@
 #include<iostream>
-#include<algorithm>
 #include<vector>
 #include <queue>
 
 using namespace std;
+int level = 0;
 
 // Implementation of basic binary tree
 struct Node {
@@ -174,8 +174,88 @@ int getMax(Node* root)
 		return max(root->key, max(getMax(root->left), getMax(root->right)));
 }
 
+void left_view(Node* root, int curLevel=1)
+{
+	if (root == NULL)
+		return;
+	if (curLevel > level)
+	{
+		cout << root->key << " ";
+		level = curLevel;
+	}
+
+	left_view(root->left, curLevel + 1);
+	left_view(root->right, curLevel + 1);
+}
+
+void left_view_iter(Node* root, int curLevel=1)
+{
+	if (root == NULL)
+		return;
+	int level = 0;
+	queue<Node*> q;
+	q.push(root);
+	while (q.size() > 0)
+	{
+		// Can be done by following method on line 125
+		// Add condition if(i==0) to print the first element in the loop
+
+		Node* cur = q.front();
+		if (curLevel > level)
+		{
+			cout << cur->key << " ";
+			level = curLevel;
+			curLevel += 1;
+			q = {};
+		}
+		if (cur->left != NULL)
+			q.push(cur->left);
+		if (cur->right != NULL)
+			q.push(cur->right);
+	}
+}
+
+bool child_sum(Node* root)
+{
+	if (root == NULL || ((root->left == NULL) && (root->right == NULL)))
+		return true;
+
+	int sum = 0;
+	if (root->left != NULL)
+		sum += root->left->key;
+	if (root->right != NULL)
+		sum += root->right->key;
+	return (root->key == sum && child_sum(root->left) && child_sum(root->right));
+}
+
+bool balanced(Node* root)
+{
+	if (root == NULL)
+		return true;
+	int lh = height(root->left);
+	int rh = height(root->right);
+	return (abs(lh - rh) <= 1 && balanced(root->left) && balanced(root->right));
+}
+
+int balanced_efficient(Node* root)
+{
+	if (root == NULL)
+		return 0;
+
+	int lh = balanced_efficient(root->left);
+	if (lh == -1) return -1;
+	int rh = balanced_efficient(root->right);
+	if (rh == -1) return -1;
+
+	if (abs(lh - rh) > 1)
+		return -1;
+	else
+		return(max(lh, rh) + 1);
+}
+
 int main()
 {
+	
 	Node* root = new Node(10);
 	Node* n11 = new Node(20);
 	Node* n12 = new Node(30);
@@ -219,6 +299,13 @@ int main()
 	cout << getSize_iter(root);
 	cout << "\nMax in binary tree : ";
 	cout << getMax(root);
+	cout << "\nLeft view of binary tree : ";
+	left_view(root);
+	cout << "\nLeft view of binary tree(Iterative) : ";
+	left_view_iter(root);
+	cout << "\nCheck binary tree is balanced or not : ";
+	cout << balanced(root);
+	cout << "\nCheck binary tree is balanced or not (Efficient) Returns height if true : ";
+	cout << balanced_efficient(root);
 	return 0;
 }
-
