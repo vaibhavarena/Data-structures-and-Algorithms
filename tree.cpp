@@ -1,6 +1,7 @@
 #include<iostream>
 #include<vector>
 #include <queue>
+#include<stack>
 
 int level = 0;
 int preIndex = 0;
@@ -326,6 +327,46 @@ Node* binary_construct(int in[], int pre[], int is, int ie)
 	return root;
 }
 
+void spiral(Node* root)
+{
+	if (root == NULL)
+		return;
+
+	std::queue<Node*> q;
+	std::stack<int> s;
+	bool reverse = false;
+
+	q.push(root);
+	while (q.empty() == false)
+	{
+		int count = q.size();
+		for (int i = 0; i < count; i++)
+		{
+			Node* cur = q.front();
+			q.pop();
+
+			if (reverse) 
+				s.push(cur->key);
+			else
+				std::cout << cur->key << " ";
+			
+			if (cur->left != NULL) q.push(cur->left);
+			if (cur->right != NULL) q.push(cur->right);
+		}
+
+		if (reverse)
+		{
+			while (s.empty() == false)
+			{
+				std::cout << s.top() << " ";
+				s.pop();
+			}
+		}
+		reverse = !reverse;
+		std::cout << "\n";
+	}
+}
+
 int main()
 {
 	Node* root = new Node(10);
@@ -382,13 +423,18 @@ int main()
 	std::cout << "\nMax width of binary tree : ";
 	std::cout << max_width(root);
 	std::cout << "\nConvert binary tree to dll : ";
-	Node* start = binary_to_dll(root);
-	traverse_dll(start);
+	// Binary to dll conversion is making modifications to root, so moved to end
 	std::cout << "\nConstructing a binary tree from inorder and preorder arrays : ";
 	Node* bin_tree_head = binary_construct(in, pre, 0, *(&pre + 1) - pre - 1);
 	std::cout << "\nInorder new construct : ";
 	inorder(bin_tree_head);
 	std::cout << "\nPreorder new construct : ";
 	preorder(bin_tree_head);
+	std::cout << "\nSpiral traversal of binary tree : ";
+	spiral(root);
+
+	Node* start = binary_to_dll(root);
+	traverse_dll(start);
+
 	return 0;
 }
