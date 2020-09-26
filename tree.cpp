@@ -2,14 +2,16 @@
 #include<vector>
 #include <queue>
 
-using namespace std;
 int level = 0;
+int preIndex = 0;
+int in[] = { 20, 10, 40, 30, 50 };
+int pre[] = {10, 20, 30, 40, 50};
 
 // Implementation of basic binary tree
 struct Node {
 	int key;
-	Node *left;
-	Node *right;
+	Node* left;
+	Node* right;
 
 	Node(int x)
 	{
@@ -18,13 +20,13 @@ struct Node {
 	}
 
 };
-
+Node* prev = NULL;
 void inorder(Node* root)
 {
 	if (root != NULL)
 	{
 		inorder(root->left);
-		cout << root->key << " ";
+		std::cout << root->key << " ";
 		inorder(root->right);
 	}
 }
@@ -33,7 +35,7 @@ void preorder(Node* root)
 {
 	if (root != NULL)
 	{
-		cout << root->key << " ";
+		std::cout << root->key << " ";
 		preorder(root->left);
 		preorder(root->right);
 	}
@@ -45,7 +47,7 @@ void postorder(Node* root)
 	{
 		postorder(root->left);
 		postorder(root->right);
-		cout << root->key << " ";
+		std::cout << root->key << " ";
 	}
 }
 
@@ -54,7 +56,7 @@ int height(Node* root)
 	if (root == NULL)
 		return 0;
 	else
-		return max(height(root->left), height(root->right)) + 1;
+		return std::max(height(root->left), height(root->right)) + 1;
 }
 
 // Print nodes at k distance
@@ -63,9 +65,9 @@ void printk(Node* root, int k)
 	if (root != NULL)
 	{
 		if (k == 0)
-			cout << root->key << " ";
+			std::cout << root->key << " ";
 
-		printk(root->left, k-1);
+		printk(root->left, k - 1);
 		printk(root->right, k - 1);
 	}
 
@@ -85,8 +87,8 @@ void breadth(Node* root)
 {
 	if (root == NULL)
 		return;
-	
-	queue<Node*> q;
+
+	std::queue<Node*> q;
 	q.push(root);
 	q.push(NULL);
 
@@ -94,19 +96,19 @@ void breadth(Node* root)
 	{
 		Node* cur = q.front();
 		q.pop();
-		
+
 		if (cur == NULL)
 		{
-			cout << "\n";
+			std::cout << "\n";
 			q.push(NULL);
 			continue;
 		}
 
-		cout << cur->key << " ";
+		std::cout << cur->key << " ";
 
-		if (cur -> left != NULL)
+		if (cur->left != NULL)
 			q.push(cur->left);
-		if (cur -> right != NULL)
+		if (cur->right != NULL)
 			q.push(cur->right);
 	}
 }
@@ -114,7 +116,7 @@ void breadth(Node* root)
 // Level order traversal with new line
 void breadth_m2(Node* root)
 {
-	queue<Node*> q;
+	std::queue<Node*> q;
 	if (root == NULL)
 		return;
 
@@ -125,15 +127,15 @@ void breadth_m2(Node* root)
 		for (int i = 0; i < count; i++)
 		{
 			Node* cur = q.front();
-			cout << cur->key << " ";
+			std::cout << cur->key << " ";
 			q.pop();
 
-			if(cur->left != NULL)
+			if (cur->left != NULL)
 				q.push(cur->left);
 			if (cur->right != NULL)
 				q.push(cur->right);
 		}
-		cout << "\n";
+		std::cout << "\n";
 	}
 }
 
@@ -150,7 +152,7 @@ int getSize_iter(Node* root)
 	if (root == NULL)
 		return 0;
 
-	queue<Node*> x;
+	std::queue<Node*> x;
 	x.push(root);
 	int count = 0;
 	while (x.size() > 0)
@@ -158,9 +160,9 @@ int getSize_iter(Node* root)
 		Node* cur = x.front();
 		count += 1;
 		x.pop();
-		if(cur->left != NULL)
+		if (cur->left != NULL)
 			x.push(cur->left);
-		if(cur->right != NULL)
+		if (cur->right != NULL)
 			x.push(cur->right);
 	}
 	return count;
@@ -171,16 +173,16 @@ int getMax(Node* root)
 	if (root == NULL)
 		return INT_MIN;
 	else
-		return max(root->key, max(getMax(root->left), getMax(root->right)));
+		return std::max(root->key, std::max(getMax(root->left), getMax(root->right)));
 }
 
-void left_view(Node* root, int curLevel=1)
+void left_view(Node* root, int curLevel = 1)
 {
 	if (root == NULL)
 		return;
 	if (curLevel > level)
 	{
-		cout << root->key << " ";
+		std::cout << root->key << " ";
 		level = curLevel;
 	}
 
@@ -188,12 +190,12 @@ void left_view(Node* root, int curLevel=1)
 	left_view(root->right, curLevel + 1);
 }
 
-void left_view_iter(Node* root, int curLevel=1)
+void left_view_iter(Node* root, int curLevel = 1)
 {
 	if (root == NULL)
 		return;
 	int level = 0;
-	queue<Node*> q;
+	std::queue<Node*> q;
 	q.push(root);
 	while (q.size() > 0)
 	{
@@ -203,7 +205,7 @@ void left_view_iter(Node* root, int curLevel=1)
 		Node* cur = q.front();
 		if (curLevel > level)
 		{
-			cout << cur->key << " ";
+			std::cout << cur->key << " ";
 			level = curLevel;
 			curLevel += 1;
 			q = {};
@@ -250,12 +252,82 @@ int balanced_efficient(Node* root)
 	if (abs(lh - rh) > 1)
 		return -1;
 	else
-		return(max(lh, rh) + 1);
+		return(std::max(lh, rh) + 1);
+}
+
+int max_width(Node* root)
+{
+	if (root == NULL) return 0;
+	std::queue<Node*> q;
+	q.push(root);
+	int res = 0;
+	while (q.size() > 0)
+	{
+		int count = q.size();
+		res = std::max(res, count);
+		for (int i = 0; i < count; i++)
+		{
+			Node* cur = q.front();
+			q.pop();
+
+			if (cur->left != NULL)
+				q.push(cur->left);
+			if (cur -> right != NULL)
+				q.push(cur->right);
+		}
+	}
+	return res;
+}
+
+Node* binary_to_dll(Node* root)
+{
+	if (root == NULL) return root;
+	Node* head = binary_to_dll(root->left);
+
+	if (prev == NULL) head = root;
+	else
+	{
+		root->left = prev;
+		prev->right = root;
+	}
+	prev = root;
+	binary_to_dll(root->right);
+	return head;
+}
+
+void traverse_dll(Node* head)
+{
+	while (head != NULL)
+	{
+		std::cout << head->key << " ";
+		head = head->right;
+	}
+}
+
+Node* binary_construct(int in[], int pre[], int is, int ie)
+{
+	if (is > ie) return NULL;
+	Node* root = new Node(pre[preIndex++]);
+
+	int inIndex;
+
+	for (int i = is; i <= ie; i++)
+	{
+		if (root->key == in[i])
+		{
+			inIndex = i;
+			break;
+		}
+	}
+
+	root->left = binary_construct(in, pre, is, inIndex - 1);
+	root->right = binary_construct(in, pre, inIndex + 1, ie);
+
+	return root;
 }
 
 int main()
 {
-	
 	Node* root = new Node(10);
 	Node* n11 = new Node(20);
 	Node* n12 = new Node(30);
@@ -271,41 +343,52 @@ int main()
 	n12->left = n23;
 	n21->right = n31;
 
-	cout << "Inorder traversal : ";
+	std::cout << "Inorder traversal : ";
 	inorder(root);
-	cout << "\n";
-	cout << "Preorder traversal : ";
+	std::cout << "\n";
+	std::cout << "Preorder traversal : ";
 	preorder(root);
-	cout << "\n";
-	cout << "Postorder traversal : ";
+	std::cout << "\n";
+	std::cout << "Postorder traversal : ";
 	postorder(root);
-	cout << "\n";
-	cout << "Height of binary tree : " << height(root);
-	cout << "\n";
-	cout << "Print node at k distance : ";
+	std::cout << "\n";
+	std::cout << "Height of binary tree : " << height(root);
+	std::cout << "\n";
+	std::cout << "Print node at k distance : ";
 	printk(root, 3);
-	cout << "\n";
-	cout << "Level order traversal inefficient : ";
+	std::cout << "\n";
+	std::cout << "Level order traversal inefficient : ";
 	breadth_slow(root);
-	cout << "\n";
-	cout << "Level order traversal efficient : \n";
+	std::cout << "\n";
+	std::cout << "Level order traversal efficient : \n";
 	breadth(root);
-	cout << "\n";
-	cout << "Level order traversal efficient Method 2: \n";
+	std::cout << "\n";
+	std::cout << "Level order traversal efficient Method 2: \n";
 	breadth_m2(root);
-	cout << "Size of binary tree : ";
-	cout << getSize(root);
-	cout << "\nSize of binary tree Iterative : ";
-	cout << getSize_iter(root);
-	cout << "\nMax in binary tree : ";
-	cout << getMax(root);
-	cout << "\nLeft view of binary tree : ";
+	std::cout << "Size of binary tree : ";
+	std::cout << getSize(root);
+	std::cout << "\nSize of binary tree Iterative : ";
+	std::cout << getSize_iter(root);
+	std::cout << "\nMax in binary tree : ";
+	std::cout << getMax(root);
+	std::cout << "\nLeft view of binary tree : ";
 	left_view(root);
-	cout << "\nLeft view of binary tree(Iterative) : ";
+	std::cout << "\nLeft view of binary tree(Iterative) : ";
 	left_view_iter(root);
-	cout << "\nCheck binary tree is balanced or not : ";
-	cout << balanced(root);
-	cout << "\nCheck binary tree is balanced or not (Efficient) Returns height if true : ";
-	cout << balanced_efficient(root);
+	std::cout << "\nCheck binary tree is balanced or not : ";
+	std::cout << balanced(root);
+	std::cout << "\nCheck binary tree is balanced or not (Efficient) Returns height if true : ";
+	std::cout << balanced_efficient(root);
+	std::cout << "\nMax width of binary tree : ";
+	std::cout << max_width(root);
+	std::cout << "\nConvert binary tree to dll : ";
+	Node* start = binary_to_dll(root);
+	traverse_dll(start);
+	std::cout << "\nConstructing a binary tree from inorder and preorder arrays : ";
+	Node* bin_tree_head = binary_construct(in, pre, 0, *(&pre + 1) - pre - 1);
+	std::cout << "\nInorder new construct : ";
+	inorder(bin_tree_head);
+	std::cout << "\nPreorder new construct : ";
+	preorder(bin_tree_head);
 	return 0;
 }
