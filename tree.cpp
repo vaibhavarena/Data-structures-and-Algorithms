@@ -7,6 +7,7 @@ int level = 0;
 int preIndex = 0;
 int in[] = { 20, 10, 40, 30, 50 };
 int pre[] = {10, 20, 30, 40, 50};
+int res = 0;
 
 // Implementation of basic binary tree
 struct Node {
@@ -367,6 +368,75 @@ void spiral(Node* root)
 	}
 }
 
+void spiral_efficient(Node* root)
+{
+	if (root == NULL) return;
+
+	std::stack<Node*> s1;
+	std::stack<Node*> s2;
+	bool count = true;
+	s1.push(root);
+	while (s1.empty() == false || s2.empty() == false)
+	{
+		if (count)
+		{
+			int x = s1.size();
+			for (int i = 0; i < x; i++)
+			{
+				if (s1.top()->left != NULL)
+					s2.push(s1.top()->left);
+				if (s1.top()->right != NULL)
+					s2.push(s1.top()->right);
+				
+				std::cout << s1.top()->key << " ";
+				s1.pop();
+			}
+			std::cout << "\n";
+			count = !count;
+		}
+		else
+		{
+			int x = s2.size();
+			for (int i = 0; i < x; i++)
+			{
+				if (s2.top()->right != NULL)
+					s1.push(s2.top()->right);
+				if (s2.top()->left != NULL)
+					s1.push(s2.top()->left);
+
+
+				std::cout << s2.top()->key << " ";
+				s2.pop();
+			}
+			std::cout << "\n";
+			count = !count;
+		}
+	}
+}
+
+int diameter(Node* root)
+{
+	if (root == NULL) return 0;
+
+	int d1 = 1 + height(root->left) + height(root->right);
+	int d2 = diameter(root->left);
+	int d3 = diameter(root->right);
+
+	return std::max(d1, std::max(d2, d3));
+}
+
+int diameter_efficient(Node* root)
+{
+	if (root == NULL)
+		return 0;
+	
+	int lh = diameter_efficient(root->left);
+	int rh = diameter_efficient(root->right);
+
+	res = std::max(res, 1 + lh + rh);
+	return 1 + std::max(lh, rh);
+}
+
 int main()
 {
 	Node* root = new Node(10);
@@ -432,7 +502,15 @@ int main()
 	preorder(bin_tree_head);
 	std::cout << "\nSpiral traversal of binary tree : ";
 	spiral(root);
+	std::cout << "\nSpiral traversal of binary tree(Efficient) : ";
+	spiral_efficient(root);
+	std::cout << "\nDiameter of binary tree : ";
+	std::cout << diameter(root);	
+	std::cout << "\nDiameter of binary tree(Efficient) : ";
+	diameter_efficient(root);
+	std::cout << res;
 
+	std::cout << "\n";
 	Node* start = binary_to_dll(root);
 	traverse_dll(start);
 
