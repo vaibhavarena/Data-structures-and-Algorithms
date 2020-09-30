@@ -437,6 +437,34 @@ int diameter_efficient(Node* root)
 	return 1 + std::max(lh, rh);
 }
 
+bool findPath(Node* root, std::vector<Node*> &path, int x)
+{
+	if (root == NULL) return false;
+
+	path.push_back(root);
+	
+	if (root->key == x) return true;
+	
+	if ((root->left && findPath(root->left, path, x)) || (root->right && findPath(root->right, path, x)))
+		return true;
+	path.pop_back();
+	return false;
+}
+
+Node* lca(Node* root, int x , int y)
+{
+	std::vector<Node*> p1, p2;
+
+	if (findPath(root, p1, x) == false || findPath(root, p2, y) == false)
+		return NULL;
+	
+	for (int i = 0; i < p1.size() - 1 && i < p2.size() - 1; i++)
+	{
+		if (p1[i + 1] != p2[i + 1])
+			return p1[i];
+	}
+}
+
 int main()
 {
 	Node* root = new Node(10);
@@ -447,10 +475,17 @@ int main()
 	Node* n23 = new Node(60);
 	Node* n31 = new Node(70);
 
-	root->right = n12;
+	//			 10 
+	//		    /   \
+	//		  20     30
+	//		 / \     /
+	//		40 50   60
+	//	   /
+	//	  70
 	root->left = n11;
-	n11->right = n22;
+	root->right = n12;
 	n11->left = n21;
+	n11->right = n22;
 	n12->left = n23;
 	n21->right = n31;
 
@@ -509,6 +544,8 @@ int main()
 	std::cout << "\nDiameter of binary tree(Efficient) : ";
 	diameter_efficient(root);
 	std::cout << res;
+	std::cout << "\nLowest common ancestor : ";
+	std::cout << lca(root, 50, 70)->key;
 
 	std::cout << "\n";
 	Node* start = binary_to_dll(root);
