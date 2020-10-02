@@ -8,7 +8,7 @@ int preIndex = 0;
 int in[] = { 20, 10, 40, 30, 50 };
 int pre[] = {10, 20, 30, 40, 50};
 int res = 0;
-
+int res_burn = 0;
 // Implementation of basic binary tree
 struct Node {
 	int key;
@@ -465,6 +465,53 @@ Node* lca(Node* root, int x , int y)
 	}
 }
 
+Node* lca_e(Node* root, int n1, int n2)
+{
+	if (root == NULL)
+		return NULL;
+
+	if (root->key == n1 || root->key == n2)
+		return root;
+
+	Node* l = lca_e(root->left, n1, n2);
+	Node* r = lca_e(root->right, n1, n2);
+
+	if (l != NULL && r != NULL)
+		return root;
+
+	if (l != NULL)
+		return l;
+	else
+		return r;
+}
+
+int burnTime(Node* root, int leaf, int& dist)
+{
+	if (root == NULL)
+		return 0;
+	if (root->key == leaf)
+	{
+		dist = 0;
+		return 1;
+	}
+	
+	int ldist = -1, rdist = -1;
+	int lh = burnTime(root->left, leaf, ldist);
+	int rh = burnTime(root->right, leaf, rdist);
+
+	if (ldist != -1)
+	{
+		dist = ldist + 1;
+		res = std::max(res, dist + rh);
+	}
+	else if (rdist != -1)
+	{
+		dist = rdist + 1;
+		res = std::max(res, dist + lh);
+	}
+	return std::max(lh, rh) + 1;
+}
+
 int main()
 {
 	Node* root = new Node(10);
@@ -546,6 +593,11 @@ int main()
 	std::cout << res;
 	std::cout << "\nLowest common ancestor : ";
 	std::cout << lca(root, 50, 70)->key;
+	std::cout << "\nLowest common ancestor(Efficient) : ";
+	std::cout << lca_e(root, 50, 70)->key;
+	std::cout << "\nBurn a binary tree from a leaf node : ";
+	int l = -1;
+	std::cout << burnTime(root, 50, l);
 
 	std::cout << "\n";
 	Node* start = binary_to_dll(root);
