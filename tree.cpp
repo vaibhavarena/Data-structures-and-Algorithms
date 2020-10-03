@@ -2,6 +2,7 @@
 #include<vector>
 #include <queue>
 #include<stack>
+#include<cmath>
 
 int level = 0;
 int preIndex = 0;
@@ -512,6 +513,61 @@ int burnTime(Node* root, int leaf, int& dist)
 	return std::max(lh, rh) + 1;
 }
 
+int countComplete(Node* root)
+{
+	if (root == NULL)
+		return 0;
+
+	int lh = 0, rh = 0;
+	Node* curr = root;
+	while (curr != NULL)
+	{
+		lh += 1;
+		curr = curr->left;
+	}
+	curr = root;
+	while (curr != NULL)
+	{
+		rh == 1;
+		curr = curr->right;
+	}
+	if (lh == rh)
+		return std::pow(2, lh) - 1;
+
+	return 1 + countComplete(root->left) + countComplete(root->right);
+}
+
+void serialize(Node* root, std::vector<int>& arr)
+{
+	if (root == NULL)
+	{
+		arr.push_back(-1);
+		return;
+	}
+	arr.push_back(root->key);
+	serialize(root->left, arr);
+	serialize(root->right, arr);
+
+}
+
+int index = 0;
+Node* deserialize(std::vector<int> arr)
+{
+	if (index == arr.size()) return NULL;
+
+	int val = arr[index];
+	index++;
+
+	if (val == -1)
+		return NULL;
+
+	Node* root = new Node(val);
+	root->left = deserialize(arr);
+	root->right = deserialize(arr);
+
+	return root;
+}
+
 int main()
 {
 	Node* root = new Node(10);
@@ -598,6 +654,17 @@ int main()
 	std::cout << "\nBurn a binary tree from a leaf node : ";
 	int l = -1;
 	std::cout << burnTime(root, 50, l);
+	std::cout << "\nCount nodes in a complete binary tree : ";
+	n12->right = new Node(90);
+	std::cout << countComplete(root);
+	std::cout << "\nSerialize a binary tree : ";
+	std::vector<int> a;
+	serialize(root, a);
+	for (int i = 0; i < a.size(); i++)
+		std::cout << a[i] << " ";
+	std::cout << "\nDeserialize a binary tree : ";
+	Node* root1 = deserialize(a);
+	preorder(root1);
 
 	std::cout << "\n";
 	Node* start = binary_to_dll(root);
