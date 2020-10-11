@@ -1,5 +1,7 @@
 #include<iostream>
 #include<queue>
+#include<set>
+#include "Source.h"
 
 struct Node {
 	int key;
@@ -16,7 +18,7 @@ void traverse(Node* root)
 {
 	if (root == NULL)
 		return;
-
+	std::cout << "\n";
 	std::queue<Node*> q;
 	q.push(root);
 	while (q.size() > 0)
@@ -100,30 +102,19 @@ Node* insertIter(Node* root, int x)
 	return root;
 }
 
-Node* getSuccessor(Node* root, bool &x)
+Node* getSuccessor(Node* root)
 {
-	if (root->right != NULL)
-	{
-		Node* cur = root->right;
-		while (cur != NULL && cur->left != NULL)
-			cur = cur->left;
-		return cur;
-	}
-	else
-	{
-		Node* cur = root->left;
-		while (cur != NULL && cur->right != NULL)
-			cur = cur->right;
-		x = false;
-		return cur;
-	}
+	root = root->right;
+	while (root != NULL && root->left != NULL)
+			root = root->left;
+	return root;
 }
 
 Node* delNode(Node* root, int x)
 {
 	if (root == NULL)
 		return root;
-	else if (root->key > x)
+	if (root->key > x)
 		root->left = delNode(root->left, x);
 	else if (root->key < x)
 		root->right = delNode(root->right, x);
@@ -143,17 +134,12 @@ Node* delNode(Node* root, int x)
 		}
 		else
 		{
-			bool x = true;
-			Node* cur = getSuccessor(root, x);
+			Node* cur = getSuccessor(root);
 			root->key = cur->key;
-
-			if (x)
-				root->right = delNode(root->right, cur->key);
-			else
-				root->left = delNode(root->left, cur->key);
+			root->right = delNode(root->right, cur->key);
 		}
-		return root;
 	}
+	return root;
 }
 
 Node* floor(Node* root, int x)
@@ -192,29 +178,7 @@ Node* ceil(Node* root, int x)
 	return res;
 }
 
-int minValue(Node* root)
-{
-	// Code here
-	if (root == NULL)
-		return -1;
-	int min;
-	Node* cur = root;
-	min = cur->key;
-	while (cur->left != NULL || cur->right != NULL)
-	{
-		if (cur->left != NULL)
-		{
-			cur = cur->left;
-			min = cur->key;
-		}
-		else
-		{
-			cur = cur->right;
-			min = cur->key;
-		}
-	}
-	return min;
-}
+
 
 int main()
 {
@@ -236,24 +200,24 @@ int main()
 	//			 /	    \
 	//			/	     \
 	//		  20		  60
-	//		/   \			\
-	//	   10	30			70
+	//		/   \		/	\
+	//	   10	30	   55		70
 	//			 \		   /   \
 	//			 40		  65	80
-	//			/  \	  /	
-	//		   35   45   55
+	//			/  \	 	
+	//		   35   45   
 
 	std::cout << "Level order traversal : \n";
 	traverse(root);
 	std::cout << "\nSearching for node -> ";
 	std::cout << "\nWhen node is present : " << search(root, 40) << "\nWhen node is not present : " << searchIter(root, 100);
 	std::cout << "\n\nDelete a node -> : ";
-	std::cout << "\nWhen a node is present : " << delNode(root, 40) << "\nWhen a node is not present : " << typeid(delNode(root, 100)).name();
+	delNode(root, 40);
+	delNode(root, 100);
+	traverse(root);
 	std::cout << "\nFloor in a BST : ";
 	std::cout << floor(root, 56)->key;
 	std::cout << "\nCeil in a BST : ";
 	std::cout << ceil(root, 56)->key;
-	std::cout << "\nMin value : ";
-	std::cout << minValue(root);
 	return 0;
 }
