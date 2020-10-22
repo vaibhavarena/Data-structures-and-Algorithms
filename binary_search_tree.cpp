@@ -1,18 +1,52 @@
 #include<iostream>
 #include<queue>
 #include<set>
+#include<stack>
 #include "Source.h"
 
 struct Node {
 	int key;
 	Node* left, * right;
-
+	int nodes;
 	Node(int x)
 	{
 		key = x;
 		left = right = NULL;
+		nodes = 0;
 	}
 };
+
+void inorder(Node* root)
+{
+	std::vector<int> v;
+	std::stack<Node*> s;
+
+	while (root)
+	{
+		s.push(root);
+		root = root->left;
+	}
+	
+	while (!s.empty())
+	{
+		Node* cur = s.top();
+		s.pop();
+
+		v.push_back(cur->key);
+
+		Node* right = cur->right;
+
+		while (right)
+		{
+			s.push(right);
+			right = right->left;
+		}
+	}
+
+	for (auto i : v)
+		std::cout << i << " ";
+}
+
 
 void traverse(Node* root)
 {
@@ -102,6 +136,8 @@ Node* insertIter(Node* root, int x)
 	return root;
 }
 
+
+// Find successor node for an element to be deleted
 Node* getSuccessor(Node* root)
 {
 	root = root->right;
@@ -142,6 +178,8 @@ Node* delNode(Node* root, int x)
 	return root;
 }
 
+
+//Find the floor of an element
 Node* floor(Node* root, int x)
 {
 	Node* res = NULL;
@@ -161,6 +199,8 @@ Node* floor(Node* root, int x)
 	return res;
 }
 
+
+// Find the ceiling of an element
 Node* ceil(Node* root, int x)
 {
 	Node* res = NULL;
@@ -178,7 +218,92 @@ Node* ceil(Node* root, int x)
 	return res;
 }
 
+// Find ceiling on left side of an array
+void ceil_left(int arr[], int n)
+{
+	std::set<int> s;
 
+	for (int i = 0; i < n; i++)
+	{
+		s.insert(arr[i]);
+		auto x = s.upper_bound(arr[i]);
+		if (x == s.end())
+			std::cout << -1 << " ";
+		else
+			std::cout << *x << " ";
+		s.insert(arr[i]);
+	}
+}
+
+
+int countNodes(Node* root)
+{
+	if (root == NULL)
+		return 0;
+	else return 1 + (countNodes(root->left)) + (countNodes(root->right));
+}
+
+
+
+// Find kth smallest element
+int lcount(Node* root, int k)
+{
+	if (root == NULL)
+		return NULL;
+
+}
+
+int small(Node* root)
+{
+	if (root == NULL)
+		return INT_MAX;
+	else
+		return std::min(root->key, std::min(small(root->left), small(root->right)));
+}
+
+int large(Node* root)
+{
+	if (root == NULL)
+		return INT_MIN;
+	else
+		return std::max(root->key, std::max(large(root->left), large(root->right)));
+}
+
+bool checkBst(Node* root)
+{
+	if (root == NULL)
+		return true;
+	else if (root->key > large(root->left) && root->key < small(root->right))
+		return true;
+	else
+		return false;
+}
+
+// Check for BST with min max approach
+bool isbst(Node* root, int min, int max)
+{
+	if (root == NULL)
+		return true;
+	return ((root->key > min) && (root->key < max) && isbst(root->left, min, root->key) && isbst(root->right, root->key, max));
+}
+
+
+// Check for BST with inorder traversal approach
+int prev = INT_MIN;
+bool isBst(Node* root)
+{
+	if (root == NULL)
+		return true;
+	if (isBst(root->left) == false) return false;
+	if (root->key <= prev) return false;
+	prev = root->key;
+	return isBst(root->right);
+}
+
+void fixBst(Node* root)
+{
+
+}
 
 int main()
 {
@@ -206,8 +331,12 @@ int main()
 	//			 40		  65	80
 	//			/  \	 	
 	//		   35   45   
+	
+	
+	std::cout << "Inorder traversal : ";
+	inorder(root);
 
-	std::cout << "Level order traversal : \n";
+	std::cout << "\nLevel order traversal : \n";
 	traverse(root);
 	std::cout << "\nSearching for node -> ";
 	std::cout << "\nWhen node is present : " << search(root, 40) << "\nWhen node is not present : " << searchIter(root, 100);
@@ -219,5 +348,17 @@ int main()
 	std::cout << floor(root, 56)->key;
 	std::cout << "\nCeil in a BST : ";
 	std::cout << ceil(root, 56)->key;
+
+	int arr[] = { 3,5,9,2,1,6 };
+	std::cout << "\nCeil on left side of an array : ";
+	ceil_left(arr, sizeof(arr) / sizeof(arr[0]));
+	std::cout << "\nCheck for BST : ";
+	std::cout << checkBst(root);
+	std::cout << "\nCheck for BST(Efficient Min Max solution) : ";
+	std::cout << isbst(root, INT_MIN, INT_MAX);
+	std::cout << "\nCheck for BST(Efficient Inorder solution) : ";
+	std::cout << isBst(root);
+	
+
 	return 0;
 }
