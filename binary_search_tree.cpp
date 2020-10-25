@@ -2,7 +2,8 @@
 #include<queue>
 #include<set>
 #include<stack>
-#include "Source.h"
+#include<unordered_set>
+#include<map>
 
 struct Node {
 	int key;
@@ -16,9 +17,9 @@ struct Node {
 	}
 };
 
-void inorder(Node* root)
+std::vector<Node*> inorder(Node* root)
 {
-	std::vector<int> v;
+	std::vector<Node*> v;
 	std::stack<Node*> s;
 
 	while (root)
@@ -32,7 +33,7 @@ void inorder(Node* root)
 		Node* cur = s.top();
 		s.pop();
 
-		v.push_back(cur->key);
+		v.push_back(cur);
 
 		Node* right = cur->right;
 
@@ -42,9 +43,11 @@ void inorder(Node* root)
 			right = right->left;
 		}
 	}
-
+	std::cout << "\nInorder : ";
 	for (auto i : v)
-		std::cout << i << " ";
+		std::cout << i->key << " ";
+	std::cout << "\n";
+	return v;
 }
 
 
@@ -302,7 +305,105 @@ bool isBst(Node* root)
 
 void fixBst(Node* root)
 {
+	prev = INT_MIN;
 
+	Node* a = NULL,* b = NULL;
+
+	std::vector<Node*> v;
+	v = inorder(root);
+
+	for (auto i : v)
+	{
+		if (i->key < prev)
+		{
+			if (a == NULL)
+				a->key = prev;
+			b->key = i->key;
+		}
+		prev = i->key;
+	}
+
+	int temp = a->key;
+	a->key = b->key;
+	b->key = temp;
+}
+
+
+// Finds first and second fix bst without array
+Node* previ = NULL, * first = NULL, * second = NULL;
+void fixbstEff(Node* root)
+{
+	if (root == NULL)
+		return;
+	fixbstEff(root->left);
+
+	if (previ != NULL && root->key < previ->key)
+	{
+		if (first == NULL)
+			first = previ;
+		second = root;
+	}
+	
+	previ = root;
+
+	fixbstEff(root->right);
+}
+
+void pairSum(Node* root, int x)
+{
+	std::vector<Node*> v = inorder(root);
+
+	int countf = 0;
+	Node* first = v[countf];
+	int count = v.size() - 1;
+	Node* last = v[count];
+
+	while (last->key > first->key)
+	{
+		int sum = first->key + last->key;
+
+		if (sum == x)
+			std::cout << "Pair: " << first->key << " " << last->key << "\n";
+		if (sum > x)
+		{
+			count = count - 1;
+			last = v[count];
+		}
+		else
+		{
+			countf = countf + 1;
+			first = v[countf];
+		}
+	}
+}
+
+bool isPairSum(Node* root, int sum, std::unordered_set<int> u)
+{
+	if (root == NULL)
+		return false;
+
+	if (isPairSum(root->left, sum, u) == true)
+		return true;
+
+	if (u.find(sum - (root->key)) != u.end())
+		return true;
+	else
+		u.insert(root->key);
+
+	if (isPairSum(root->right, sum, u) == true)
+		return true;
+}
+
+void verticalSum(Node* root, std::map<int, int> &m, int k = 0)
+{
+	if (root == NULL)
+		return;
+
+	verticalSum(root->left, m, k - 1);
+
+	m[k] += root->key;
+
+	verticalSum(root->right, m, k + 1);
 }
 
 int main()
@@ -326,9 +427,9 @@ int main()
 	//			/	     \
 	//		  20		  60
 	//		/   \		/	\
-	//	   10	30	   55		70
+	//	   10	30	   55	70
 	//			 \		   /   \
-	//			 40		  65	80
+	//			 40		  65	80			40 is deleted later in delNode
 	//			/  \	 	
 	//		   35   45   
 	
@@ -359,6 +460,13 @@ int main()
 	std::cout << "\nCheck for BST(Efficient Inorder solution) : ";
 	std::cout << isBst(root);
 	
+	std::cout << "\nPair sum in BST : ";
+	pairSum(root, 80);
+	std::cout << "\nVertical sum in BST : ";
+	std::map<int, int> m;
+	verticalSum(root, m);
+	for (auto i : m)
+		std::cout << "\n" << i.first << " " << i.second;
 
 	return 0;
 }
