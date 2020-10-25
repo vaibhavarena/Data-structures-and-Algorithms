@@ -4,6 +4,7 @@
 #include<stack>
 #include<unordered_set>
 #include<map>
+#include<utility>
 
 struct Node {
 	int key;
@@ -406,6 +407,40 @@ void verticalSum(Node* root, std::map<int, int> &m, int k = 0)
 	verticalSum(root->right, m, k + 1);
 }
 
+void verticalTraversal(Node* root)
+{
+	if (root == NULL)
+		return;
+
+	std::map<int, std::vector<int>> m;
+	std::queue<std::pair<Node*, int>> q;
+
+	q.push({ root, 0 });
+
+	while (!q.empty())
+	{
+		Node* cur = q.front().first;
+		int hd = q.front().second;
+
+		m[hd].push_back(cur->key);
+		q.pop();
+
+		if (cur->left != NULL)
+			q.push({ cur->left, hd-1 });
+		if (cur->right != NULL)
+			q.push({ cur->right, hd+1 });
+	}
+
+	for (auto x : m)
+	{
+		std::vector<int> v = x.second;
+		for (auto i : v)
+			std::cout << i << " ";
+		std::cout << "\n";
+	}
+}
+
+
 int main()
 {
 	Node* root = new Node(50);
@@ -467,6 +502,8 @@ int main()
 	verticalSum(root, m);
 	for (auto i : m)
 		std::cout << "\n" << i.first << " " << i.second;
+	std::cout << "\nVertical traversal in BST : \n";
+	verticalTraversal(root);
 
 	return 0;
 }
