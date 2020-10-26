@@ -440,6 +440,73 @@ void verticalTraversal(Node* root)
 	}
 }
 
+void top_view(Node* root)
+{
+	std::queue<std::pair<Node*, int>> q;
+	std::map<int, std::vector<Node*>> m;
+
+	if (root == NULL)
+		return;
+
+	q.push({root, 0});
+
+	while (!q.empty())
+	{
+		Node* cur = q.front().first;
+		int hd = q.front().second;
+		q.pop();
+
+		m[hd].push_back(cur);
+
+		if (cur->left != NULL)
+			q.push({ cur->left, hd - 1 });
+		if (cur->right != NULL)
+			q.push({ cur->right, hd + 1 });
+	}
+	
+	for (auto x : m)
+	{
+		std::vector<Node*> v = x.second;
+		std::cout << "\n";
+		for (auto i : v)
+		{
+			std::cout << i->key << " ";
+			break;
+		}
+	}
+}
+
+void bottom_view(Node* root)
+{
+	std::map<int, std::stack<Node*>> m;
+	std::queue<std::pair<Node*, int>> q;
+
+	if (root == NULL)
+		return;
+
+	q.push({ root, 0 });
+
+	while (!q.empty())
+	{
+		Node* cur = q.front().first;
+		int hd = q.front().second;
+
+		q.pop();
+
+		m[hd].push(cur);
+
+		if (cur->right != NULL)
+			q.push({ cur->right, hd + 1 });
+		if (cur->left != NULL)
+			q.push({ cur->left, hd - 1 });
+	}
+
+	for (auto x : m)
+	{
+		Node* ax = x.second.top();
+		std::cout << "\n" << ax->key;
+	}
+}
 
 int main()
 {
@@ -504,6 +571,10 @@ int main()
 		std::cout << "\n" << i.first << " " << i.second;
 	std::cout << "\nVertical traversal in BST : \n";
 	verticalTraversal(root);
+	std::cout << "\nTop view of binary tree : ";
+	top_view(root);
+	std::cout << "\nBottom view of binary tree : ";
+	bottom_view(root);
 
 	return 0;
 }
