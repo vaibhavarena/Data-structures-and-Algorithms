@@ -1,4 +1,6 @@
 #include <cstddef>
+#include <climits>
+#include <iostream>
 
 class Minheap
 {
@@ -25,7 +27,7 @@ public:
 		a = a - b;
 	}
 
-	int insert(int x)
+	void insert(int x)
 	{
 		if (size == capacity)
 		{
@@ -62,7 +64,28 @@ public:
 			minHeapify(smallest);
 		}
 	}
+
+	int extractMin()
+	{
+		if (size == 0)
+			return INT_MIN;
+		
+		if (size == 1)
+		{
+			size--;
+			return arr[0];
+		}
+
+		swap(arr[0], arr[size-1]);
+		size--;
+
+		minHeapify(0);
+
+		return arr[size];
+	}
 };
+
+
 
 int main()
 {
@@ -76,6 +99,6 @@ int main()
 	arr->insert(60);
 	arr->insert(70);
 
-
+	std::cout << "The minimum element removed from heap : " << arr->extractMin();
 	return 0;
 }
