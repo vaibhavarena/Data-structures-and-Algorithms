@@ -164,15 +164,15 @@ public:
 
 	void heapSort(int arr[], int n)
 	{
+		buildHeap(arr, n);
 		for (int i = n; i >= 0; i--)
 		{
-			buildHeap(arr, n);
 			swap(arr[0], arr[i]);
 			maxHeapify(arr, i, 0);
 		}
 	}
 
-	void ksorted(int arr[], int k)
+	void ksorted(int arr[], int n, int k)
 	{
 		std::priority_queue<int, std::vector<int>, std::greater<int>> pq;
 
@@ -181,7 +181,7 @@ public:
 
 		int index = 0;
 
-		for (int i = k+1; i < k; i++)
+		for (int i = k; i < n; i++)
 		{
 			arr[index++] = pq.top();
 			pq.pop();
@@ -305,6 +305,46 @@ void mergeArr(std::vector<std::vector<int>>& arr)
 		std::cout << x << " ";
 }
 
+void medianStreams(int arr[], int n)
+{
+	std::priority_queue<int> s;
+	std::priority_queue<int, std::vector<int>, std::greater<int>> l;
+
+	s.push(arr[0]);
+	std::cout << "\n" << arr[0];
+	for (int i = 1; i < n; i++)
+	{
+		if (s.size() > l.size())
+		{
+			if (s.top() > arr[i])
+			{
+				l.push(s.top());
+				s.pop();
+				s.push(arr[i]);
+			}
+			else
+			{
+				l.push(arr[i]);
+			}
+			std::cout << "\n" << (s.top() + l.top()) / 2.0;
+		}
+		else
+		{
+			if (s.top() >= arr[i])
+			{
+				s.push(arr[i]);
+			}
+			else
+			{
+				l.push(arr[i]);
+				s.push(l.top());
+				l.pop();
+			}
+			std::cout << "\n" << s.top();
+		}
+	}
+}
+
 int main()
 {
 	Minheap *arr = new Minheap(10);
@@ -342,6 +382,9 @@ int main()
 	a.push_back(r);
 	
 	mergeArr(a);
+
+	std::cout << "\nMedian of streaming integers : ";
+	medianStreams(x, sizeof(x) / sizeof(x[0]));
 
 	return 0;
 }
