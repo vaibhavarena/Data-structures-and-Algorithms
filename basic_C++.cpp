@@ -1,24 +1,59 @@
 #include <iostream>
+#include <vector>
+#include <string.h>
 
 using namespace std;
 
-int columnWithMaxZeros(int arr[][5]){
-    int maxCount = 0;
-    int col;
-    for(int j = 0; j < 5 ; j++)
+void countOddEven(int arr[], int sizeof_array)
+{
+    // Count occurences of odd and even numbers in an array
+    cout<< "\nOdd Even : ";
+    int countOdd=0, countEven=0;
+   for(int i = 0;i< sizeof_array;i++)
+   {
+    if(arr[i] % 2 == 0)
+        countEven+=1;
+    else
+        countOdd+=1;
+   }
+   
+   cout<<countOdd<<" "<<countEven << endl;
+    
+}
+
+void swapElements(int arr[], int sizeof_array){
+    // Swap i with i+2 element
+    int temp;
+    for(int i = 0; i < sizeof_array - 2; i++)
     {
-        int count = 0;
-        for(int i = 0; i < 3; i++)
-        {
-            if(arr[i][j] == 0)
-                count++;
-        }
-        if(maxCount <= count){
-            maxCount = count;
-            col = j;
-        }
+        temp = arr[(i+2)];
+        arr[(i+2)] = arr[i];
+        arr[i] = temp;
     }
-    return col;
+    cout << "\nSwap Elements : ";
+    for(int i = 0; i < sizeof_array; i++)
+    {
+        cout << arr[i] << " ";
+    }
+    cout <<endl;
+}
+
+int digitalRoot(int n)
+{
+    // Digital root is sum of elements of number and if root is greater than 9 find digital root again
+    int sum = 0;
+    
+    while(n)
+    {
+        sum += (n%10);
+        n = n/10;
+    }
+
+    if(sum / 10 != 0)
+    {
+        return digitalRoot(sum);
+    }
+    return sum;
 }
 
 void interchange(int arr[][4], int r,int c)
@@ -45,58 +80,125 @@ void interchange(int arr[][4], int r,int c)
 	   }
 }
 
-void swapElements(int arr[], int sizeof_array){
-    // Swap i with i+2 element
+int columnWithMaxZeros(int arr[][5]){
+    // Find the column with maximum number of zeros
+    int maxCount = 0;
+    int col;
+    for(int j = 0; j < 5 ; j++)
+    {
+        int count = 0;
+        for(int i = 0; i < 3; i++)
+        {
+            if(arr[i][j] == 0)
+                count++;
+        }
+        if(maxCount <= count){
+            maxCount = count;
+            col = j;
+        }
+    }
+    return col;
+}
+
+void insertAtIndex(int arr[], int sizeOfArray, int index, int element)
+{
+    //Insert an element in an array at specific index and shift forward other elements
     int temp;
-    for(int i = 0; i < sizeof_array - 2; i++)
-    {
-        temp = arr[(i+2)];
-        arr[(i+2)] = arr[i];
-        arr[i] = temp;
-    }
-    cout << "\nSwap Elements : ";
-    for(int i = 0; i < sizeof_array; i++)
-    {
-        cout << arr[i] << " ";
-    }
-    cout <<endl;
-}
-
-
-void countOddEven(int arr[], int sizeof_array)
-{
-    // Count occurences of odd and even numbers in an array
-    cout<< "\nOdd Even : ";
-    int countOdd=0, countEven=0;
-   for(int i = 0;i< sizeof_array;i++)
-   {
-    if(arr[i] % 2 == 0)
-        countEven+=1;
-    else
-        countOdd+=1;
-   }
-   
-   cout<<countOdd<<" "<<countEven << endl;
+    int count = sizeOfArray;
     
+    while(count != index)
+    {
+        count--;
+        arr[count+1] = arr[count];
+    }
+    arr[index] = element;
 }
 
-int digitalRoot(int n)
+vector<int> largestAndSecondLargest(int sizeOfArray, int arr[]){
+    int max = INT8_MIN, max2= INT8_MIN;
+    vector<int> result;
+
+     for(int i = 0; i < sizeOfArray; i++)
+     {
+         // If max is updated max2 takes its place
+         if(arr[i] > max)
+         {
+            max2 = max;
+            max = arr[i];
+         }
+        if(arr[i] > max2 && arr[i] < max)
+            max2 = arr[i];
+     }
+     
+     if(max2 == INT8_MIN)
+        max2 = -1;
+        
+     result.push_back(max);
+     result.push_back(max2);
+     
+     return result;
+}
+
+int findSum(string s)
 {
-    // Digital root is sum of elements of number and if root is greater than 9 find digital root again
+    // Find the sum of digits in an alphanumeric string
     int sum = 0;
-    
-    while(n)
+    string str = "";
+    s = s + " ";
+
+    for(int i = 0; i < s.length(); i++)
     {
-        sum += (n%10);
-        n = n/10;
+        if(isdigit(s[i]))
+        {
+            str += s[i];
+        }
+        else if(str.length() > 0)
+        {
+            sum += stoi(str);
+            str = "";
+        }
     }
 
-    if(sum / 10 != 0)
-    {
-        return digitalRoot(sum);
-    }
     return sum;
 }
+
+int strstr(string s, string x)
+{
+    // Find the second string in first as a substring
+    int m = s.length();
+    int n = x.length();
+
+    for(int i = 0; i < m-n+1; i++)
+    {
+        int a = 1;
+        int index = 0;
+        for(int j = i; j < i + n; j++)
+        {
+            cout << "S : "<< s[j] << "     I : "<< x[index] << endl;
+            if(s[j] == x[index])
+            {
+                index++;
+            }
+            else{
+                a = 0;
+                break;
+            }                
+        }
+        if(a)
+            return i;
+    }
+    return -1;
+}
+
+char *encode(char *src)
+{     
+    char *ch = new char[2];
+    // Return occurence of each alphabet in a string
+    cout << endl << strlen(src) << endl;
+
+    return ch;
+}    
+
 
 int main()
 {
@@ -112,4 +214,14 @@ int main()
 
     int arr4[][5] = {{1, 1, 0, 1, 0}, {1, 0, 0, 1, 0}, {0, 1, 0, 0, 0}};
     cout << "Column with maximum zeros : " << columnWithMaxZeros(arr4) << endl;
+
+    // Insert at index
+    // Largest and second largest    
+
+    cout << "Sum of numbers in a string : " << findSum("va23ibh9av20") << endl;
+
+    cout << "Substring in a string : " << strstr("geegsforgeeks", "gsforgeeks") << endl;
+
+    string name = "wwwekddkkkkkdllll";
+    const char *ch = name.c_str();
 }
