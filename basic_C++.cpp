@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <string.h>
+#include <algorithm>
+#include <numeric>
 
 using namespace std;
 
@@ -192,13 +194,95 @@ int strstr(string s, string x)
 
 char *encode(char *src)
 {     
-    char *ch = new char[2];
     // Return occurence of each alphabet in a string
-    cout << endl << strlen(src) << endl;
+    int count = 0;
+    int index = 0;
+    char *ch = new char[strlen(src) + 1000];
 
+    for(int i = 0; src[i] != '\0'; i++)
+    {
+        if(count == 0)
+        {
+            ch[index] = src[i];
+            index++;
+            count++;
+        }
+
+        else if(src[i] == src[i-1])
+        {
+            count++;
+        }
+
+        else
+        {
+            while(count)
+            {
+                 ch[index] = to_string(count % 10)[0];
+                 index++;
+                 count = count/10;
+            }
+
+            ch[index] = src[i];
+            index++;
+            count = 1;
+        }
+    }
+
+    if(count > 0)
+    {
+        while(count)
+            {
+                 ch[index] = to_string(count % 10)[0];
+                 index++;
+                 count = count/10;
+            }
+    }
+    
     return ch;
 }    
 
+
+string reverseWords(string s) 
+{ 
+    string delimiter = ".";
+    vector<string> v;
+
+    size_t last = 0, pos = 0;
+
+    while((pos = s.find(delimiter, last)) != string::npos)
+    {
+        v.push_back(s.substr(last, pos - last));
+        last = pos + delimiter.length();
+    }
+
+    v.push_back(s.substr(last, string::npos));
+    reverse(v.begin(), v.end());
+
+    string z = accumulate(v.begin(), v.end(), string(), [](string &ss, string &s){
+        return ss.empty() ? s : ss + "." + s;
+    });
+
+    return z;
+} 
+
+void reverse_dig(int &a,int &b)
+{
+    //Add your code here.
+    int n1 = 0, n2 = 0;
+    while(a)
+    {
+        n1 = (n1*10) + a%10;
+        a = a / 10;
+    }
+    
+    while(b)
+    {
+        n2 = (n2*10) + b%10;
+        b = b / 10;
+    }
+    a = n1;
+    b = n2;
+}
 
 int main()
 {
@@ -222,6 +306,16 @@ int main()
 
     cout << "Substring in a string : " << strstr("geegsforgeeks", "gsforgeeks") << endl;
 
-    string name = "wwwekddkkkkkdllll";
-    const char *ch = name.c_str();
+    char ch[] = {'a', 'a', 'a', 'a', 'a', 'a', 'b', 'b', 'b', 'b', 'd', 'e' , 'z' ,'a', 'a', 'a'};
+    char *a = encode(ch);
+    for(int i = 0; a[i] != '\0'; i++)
+        cout << a[i] << " ";
+    cout << endl;
+
+    string s = "i.like.this.program.very.much";
+    cout << reverseWords(s) << endl;
+
+    int n1 = 2332, n2= 92920;
+    reverse_dig(n1, n2);
+    cout << n1 << " " << n2 << endl;
 }
