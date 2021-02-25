@@ -54,10 +54,28 @@ int setBits(int n)
     return count;
 }
 
+// Count the number of bits needed to be flipped to equalize two numbers
+int countBitsFlips(int a, int b)
+{
+    // Will return a number with all different bits set
+    int y = a ^ b;
+    int count = 0;
+
+    // Count all set bits
+    while(y)
+    {
+        y = y & (y - 1);
+        count ++;
+    }
+
+    return count;
+}
+
 int main()
 {
     std::cout << "First set bit : " << firstSetBit(32512) << "\n";
     std::cout << "Rightmost different bit : " << rightMostDifferent(11, 9) << "\n";
     std::cout << "Check kth bit is set or not : " << kth(30, 3) << "\n";
     std::cout << "Set bits in a number : " << setBits(4) << "\n";
+    std::cout << "Count the number of bits to flip to equalize two numbers : " << countBitsFlips(20, 25) << "\n";
 }
